@@ -8,7 +8,15 @@ const authUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email });
 
+  if (!user) {
+    return res.status(400).json({ message: "Invalid email or password!!" });
+  }
+
   const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    return res.status(400).json({ message: "Invalid email or password!!" });
+  }
   //   if (!isMatch) {
   //     return res.status(400).json({ message: "Invalid credentials" });
   //   }
@@ -24,10 +32,6 @@ const authUser = asyncHandler(async (req, res) => {
   //     res.status(401);
   //     throw new Error("Invalid email or password");
   //   }
-
-  if (!user || !isMatch) {
-    return res.status(400).json({ message: "Invalid email or password!!" });
-  }
 
   generateToken(res, user._id);
 

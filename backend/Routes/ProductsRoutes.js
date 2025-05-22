@@ -9,7 +9,7 @@ router.get(
   "/",
   asyncHandler(async (req, res) => {
     const products = await Product.find({});
-    console.log(products);
+
     return res.json(products);
   })
 );

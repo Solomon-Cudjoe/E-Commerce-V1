@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import colors from "colors";
 import users from "./data/users.js";
-import User from "./Models/UserModel.js";
+import User from "./Models/userModel.js";
 import Product from "./Models/ProductModel.js";
 import Order from "./Models/orderModel.js";
 import connectDB from "./config/db.js";
