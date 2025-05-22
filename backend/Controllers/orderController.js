@@ -13,7 +13,13 @@ const addOrderItems = asyncHandler(async (req, res) => {
     totalPrice,
   } = req.body;
 
-  if (!orderItems && orderItems.length === 0) {
+  // Add validation for all required fields
+  if (!shippingAddress || !paymentMethod || !itemsPrice || !totalPrice) {
+    res.status(400);
+    throw new Error("Missing required order information");
+  }
+
+  if (!orderItems || orderItems.length === 0) {
     res.status(400);
     throw new Error("No order items");
   } else {
@@ -21,7 +27,9 @@ const addOrderItems = asyncHandler(async (req, res) => {
       orderItems: orderItems.map((item) => ({
         ...item,
         product: item._id || item.product,
-        _id: undefined,
+        delete: item._id,
+        return: item._id,
+        // product: item.product,
       })),
       user: req.user._id,
       shippingAddress,
@@ -88,17 +96,33 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 
 // Update order to delivered
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
-  //   const orders = await Order.find({});
-  //   res.json(orders);
-  res.send("update order to delivered");
+  const order = await Order.findById(req.params.id);
+  if (order) {
+    (order.isDelivered = true), (order.deliveredAt = Date.now());
+
+    const updateOrder = await order.save();
+
+    return res.status(200).json(updateOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
 });
 
 // Get all orders
 // Admin only
 const getOrders = asyncHandler(async (req, res) => {
-  //   const orders = await Order.find({});
-  //   res.json(orders);
-  res.send("get all orders");
+  try {
+    const orders = await Order.find({}).populate("user", "id name");
+    res.status(200).json(orders);
+
+    if (orders.length === 0) {
+      res.status(404);
+      throw new Error("No orders found");
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 export {
