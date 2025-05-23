@@ -4,7 +4,7 @@ dotenv.config();
 import colors from "colors";
 import users from "./data/users.js";
 import User from "./Models/userModel.js";
-import Product from "./Models/ProductModel.js";
+import Product from "./Models/productModel.js";
 import Order from "./Models/orderModel.js";
 import connectDB from "./config/db.js";
 import products from "./data/products.js";
